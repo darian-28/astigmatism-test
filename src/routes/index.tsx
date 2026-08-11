@@ -26,7 +26,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "A simple fan-chart visual demonstration showing how line orientation can appear different to the eye. Not a medical diagnostic test.",
+          "An interactive school-exhibition demonstration of how the eye focuses lines at different orientations. Educational screening only, not a medical diagnosis.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
