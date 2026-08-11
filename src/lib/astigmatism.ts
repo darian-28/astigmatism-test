@@ -56,7 +56,9 @@ function shuffle<T>(arr: T[], rand: () => number): T[] {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(rand() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
+    const tmp = a[i]!;
+    a[i] = a[j]!;
+    a[j] = tmp;
   }
   return a;
 }
@@ -74,7 +76,7 @@ export function generateTest(trials: number = NUMBER_OF_TRIALS): Trial[] {
   ];
   for (let i = 0; i < trials; i++) {
     const group = i % baseTriads.length; // later trials cross-check earlier ones
-    const triad = baseTriads[group].map(normalizeOrientation);
+    const triad = (baseTriads[group] ?? baseTriads[0]!).map(normalizeOrientation);
     out.push({
       index: i,
       options: shuffle(triad, rand),
