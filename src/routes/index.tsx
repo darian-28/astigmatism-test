@@ -273,7 +273,7 @@ function App() {
         </h1>
         <div className="mt-8 flex justify-center">
           <div className="w-full max-w-[420px]">
-            <FanChart rotation={trial.chartRotation} />
+            <FanChart rotation={trial.chartRotation} optionOrientations={trial.options} />
           </div>
         </div>
         <div className="mx-auto mt-8 grid max-w-md grid-cols-3 gap-3">

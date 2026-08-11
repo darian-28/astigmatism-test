@@ -4,20 +4,24 @@ type Props = {
   /** Rotation offset applied to the whole chart, in degrees. */
   rotation?: number;
   size?: number;
+  /** Orientations (deg) behind options A, B, C; labelled at the chart rim. */
+  optionOrientations?: number[];
 };
+
+const LETTERS = ["A", "B", "C"];
 
 /**
  * Radiating fan chart: straight dark lines at fixed mathematical orientations
  * on a light background, with a central fixation dot. Rendered as SVG with a
  * square viewBox so it always stays circular and symmetrical.
  */
-export function FanChart({ rotation = 0, size = 420 }: Props) {
+export function FanChart({ rotation = 0, size = 420, optionOrientations = [] }: Props) {
   const R = 200;
   const inner = 18;
 
   return (
     <svg
-      viewBox="-220 -220 440 440"
+      viewBox="-250 -250 500 500"
       width="100%"
       height="100%"
       role="img"
@@ -71,6 +75,23 @@ export function FanChart({ rotation = 0, size = 420 }: Props) {
           });
         })}
       </g>
+      {optionOrientations.map((deg, i) => {
+        const a = ((deg + rotation) * Math.PI) / 180;
+        return (
+          <text
+            key={`label-${i}`}
+            x={Math.cos(a) * (R + 34)}
+            y={Math.sin(a) * (R + 34)}
+            textAnchor="middle"
+            dominantBaseline="central"
+            fontSize={22}
+            fontWeight={600}
+            fill="var(--chart-line)"
+          >
+            {LETTERS[i]}
+          </text>
+        );
+      })}
       <circle cx={0} cy={0} r={4} fill="var(--chart-line)" />
     </svg>
   );
