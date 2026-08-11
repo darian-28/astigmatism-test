@@ -62,15 +62,18 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
+  --radius: 0.25rem;
+  --background: oklch(0.995 0 0);
+  --foreground: oklch(0.17 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
+  --primary: oklch(0.45 0.13 250);
+  --primary-foreground: oklch(0.99 0 0);
+  --chart-surface: oklch(0.995 0 0);
+  --chart-ring: oklch(0.9 0 0);
+  --chart-line: oklch(0.18 0 0);
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);
   --muted: oklch(0.968 0.007 247.896);
@@ -140,5 +143,61 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+  }
+}
+
+@layer components {
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-primary);
+    color: var(--color-primary-foreground);
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 0.9rem 2rem;
+    border-radius: var(--radius);
+  }
+  .btn-primary:hover { filter: brightness(1.08); }
+
+  .btn-quiet {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-border);
+    color: var(--color-foreground);
+    background-color: transparent;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--radius);
+  }
+  .btn-quiet:hover { background-color: var(--color-accent); }
+
+  .btn-option {
+    display: block;
+    width: 100%;
+    text-align: center;
+    border: 1px solid var(--color-border);
+    background-color: transparent;
+    color: var(--color-foreground);
+    font-size: 1.25rem;
+    font-weight: 600;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius);
+  }
+  .btn-option:hover { background-color: var(--color-accent); }
+  .btn-option-selected {
+    border-color: var(--color-primary);
+    box-shadow: inset 0 0 0 2px var(--color-primary);
+  }
+
+  .btn-primary:focus-visible,
+  .btn-quiet:focus-visible,
+  .btn-option:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
   }
 }
