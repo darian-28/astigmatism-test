@@ -86,7 +86,7 @@ export function FanChart({ rotation = 0, size = 420, optionOrientations = [] }: 
             dominantBaseline="central"
             fontSize={22}
             fontWeight={600}
-            fill="#111111"
+            fill="currentColor"
           >
             {LETTERS[i]}
           </text>
