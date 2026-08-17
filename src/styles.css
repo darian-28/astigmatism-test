@@ -133,6 +133,19 @@
   --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
+  /* The test chart must always stay high-contrast: dark lines on a light
+     surface, regardless of the UI theme. */
+  --chart-surface: oklch(0.995 0 0);
+  --chart-ring: oklch(0.75 0 0);
+  --chart-line: oklch(0.18 0 0);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --chart-surface: oklch(0.995 0 0);
+    --chart-ring: oklch(0.75 0 0);
+    --chart-line: oklch(0.18 0 0);
+  }
 }
 
 @layer base {
