@@ -18,6 +18,8 @@ const LETTERS = ["A", "B", "C"];
 export function FanChart({ rotation = 0, size = 420, optionOrientations = [] }: Props) {
   const R = 200;
   const inner = 18;
+  const chartInk = "#111111";
+  const chartPaper = "#ffffff";
 
   return (
     <svg
@@ -26,22 +28,41 @@ export function FanChart({ rotation = 0, size = 420, optionOrientations = [] }: 
       height="100%"
       role="img"
       aria-label="Fan chart with lines radiating in twelve orientations"
-      style={{ maxWidth: size, maxHeight: size, aspectRatio: "1 / 1", display: "block" }}
+      shapeRendering="geometricPrecision"
+      style={{
+        maxWidth: size,
+        maxHeight: size,
+        aspectRatio: "1 / 1",
+        display: "block",
+        backgroundColor: chartPaper,
+        colorScheme: "light",
+        forcedColorAdjust: "none",
+        isolation: "isolate",
+      }}
     >
-      <circle cx={0} cy={0} r={R + 12} fill="#ffffff" stroke="#8a8a8a" strokeWidth={1} />
-      <g transform={`rotate(${rotation})`}>
+      <circle
+        cx={0}
+        cy={0}
+        r={R + 12}
+        fill={chartPaper}
+        stroke="#707070"
+        strokeWidth={1.5}
+        style={{ fill: chartPaper, stroke: "#707070" }}
+      />
+      <g
+        transform={`rotate(${rotation})`}
+        fill="none"
+        stroke={chartInk}
+        strokeWidth={2.4}
+        style={{ fill: "none", stroke: chartInk, strokeWidth: 2.4, opacity: 1 }}
+      >
         {ORIENTATIONS.map((deg) => {
-          const rad = (deg * Math.PI) / 180;
-          const dx = Math.cos(rad);
-          const dy = Math.sin(rad);
           // Each orientation is drawn as a small band of parallel-ish lines.
           return [-1, 0, 1].map((k) => {
             const spread = k * 2.2;
             const a = ((deg + spread) * Math.PI) / 180;
             const ax = Math.cos(a);
             const ay = Math.sin(a);
-            void dx;
-            void dy;
             return (
               <line
                 key={`${deg}-${k}`}
@@ -49,18 +70,16 @@ export function FanChart({ rotation = 0, size = 420, optionOrientations = [] }: 
                 y1={ay * inner}
                 x2={ax * R}
                 y2={ay * R}
-                stroke="#111111"
-                strokeWidth={1.6}
                 strokeLinecap="butt"
+                vectorEffect="non-scaling-stroke"
+                style={{ stroke: chartInk, strokeWidth: 2.4, opacity: 1 }}
               />
             );
           });
         })}
         {ORIENTATIONS.map((deg) => {
-          const rad = ((deg + 180) * Math.PI) / 180;
           return [-1, 0, 1].map((k) => {
             const a = ((deg + 180 + k * 2.2) * Math.PI) / 180;
-            void rad;
             return (
               <line
                 key={`m-${deg}-${k}`}
@@ -68,8 +87,9 @@ export function FanChart({ rotation = 0, size = 420, optionOrientations = [] }: 
                 y1={Math.sin(a) * inner}
                 x2={Math.cos(a) * R}
                 y2={Math.sin(a) * R}
-                stroke="#111111"
-                strokeWidth={1.6}
+                strokeLinecap="butt"
+                vectorEffect="non-scaling-stroke"
+                style={{ stroke: chartInk, strokeWidth: 2.4, opacity: 1 }}
               />
             );
           });
@@ -92,7 +112,7 @@ export function FanChart({ rotation = 0, size = 420, optionOrientations = [] }: 
           </text>
         );
       })}
-      <circle cx={0} cy={0} r={4} fill="#111111" />
+      <circle cx={0} cy={0} r={4} fill={chartInk} style={{ fill: chartInk }} />
     </svg>
   );
 }
