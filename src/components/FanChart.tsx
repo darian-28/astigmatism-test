@@ -28,7 +28,7 @@ export function FanChart({ rotation = 0, size = 420, optionOrientations = [] }: 
       aria-label="Fan chart with lines radiating in twelve orientations"
       style={{ maxWidth: size, maxHeight: size, aspectRatio: "1 / 1", display: "block" }}
     >
-      <circle cx={0} cy={0} r={R + 12} fill="var(--chart-surface, #fdfdfd)" stroke="var(--chart-ring, #b3b3b3)" strokeWidth={1} />
+      <circle cx={0} cy={0} r={R + 12} fill="#ffffff" stroke="#8a8a8a" strokeWidth={1} />
       <g transform={`rotate(${rotation})`}>
         {ORIENTATIONS.map((deg) => {
           const rad = (deg * Math.PI) / 180;
@@ -49,7 +49,7 @@ export function FanChart({ rotation = 0, size = 420, optionOrientations = [] }: 
                 y1={ay * inner}
                 x2={ax * R}
                 y2={ay * R}
-                stroke="var(--chart-line, #1a1a1a)"
+                stroke="#111111"
                 strokeWidth={1.6}
                 strokeLinecap="butt"
               />
@@ -68,7 +68,7 @@ export function FanChart({ rotation = 0, size = 420, optionOrientations = [] }: 
                 y1={Math.sin(a) * inner}
                 x2={Math.cos(a) * R}
                 y2={Math.sin(a) * R}
-                stroke="var(--chart-line, #1a1a1a)"
+                stroke="#111111"
                 strokeWidth={1.6}
               />
             );
@@ -86,13 +86,13 @@ export function FanChart({ rotation = 0, size = 420, optionOrientations = [] }: 
             dominantBaseline="central"
             fontSize={22}
             fontWeight={600}
-            fill="var(--chart-line, #1a1a1a)"
+            fill="#111111"
           >
             {LETTERS[i]}
           </text>
         );
       })}
-      <circle cx={0} cy={0} r={4} fill="var(--chart-line, #1a1a1a)" />
+      <circle cx={0} cy={0} r={4} fill="#111111" />
     </svg>
   );
 }
