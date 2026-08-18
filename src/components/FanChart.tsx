@@ -95,8 +95,11 @@ export function FanChart({ rotation = 0, size = 420, optionOrientations = [] }: 
           });
         })}
       </g>
+      {/* optionOrientations are screen-space angles; the lattice is rotation-
+          invariant (rotation is always a multiple of 15 deg), so labels sit
+          exactly on the line group the visitor sees. */}
       {optionOrientations.map((deg, i) => {
-        const a = ((deg + rotation) * Math.PI) / 180;
+        const a = (deg * Math.PI) / 180;
         return (
           <text
             key={`label-${i}`}
