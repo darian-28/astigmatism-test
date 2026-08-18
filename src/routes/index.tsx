@@ -43,7 +43,6 @@ export const Route = createFileRoute("/")({
   component: App,
 });
 
-type TestKind = "astigmatism" | "acuity";
 type Screen =
   | "home"
   | "instructions"
@@ -111,7 +110,6 @@ function FullscreenButton() {
 
 function App() {
   const [screen, setScreen] = useState<Screen>("home");
-  const [kind, setKind] = useState<TestKind>("astigmatism");
 
   // Astigmatism session state (session-only, never persisted).
   const [trials, setTrials] = useState<Trial[]>([]);
@@ -229,7 +227,6 @@ function App() {
             type="button"
             className="btn-primary"
             onClick={() => {
-              setKind("astigmatism");
               reset();
               setScreen("instructions");
             }}
@@ -240,7 +237,6 @@ function App() {
             type="button"
             className="btn-primary"
             onClick={() => {
-              setKind("acuity");
               reset();
               setScreen("acuity-instructions");
             }}
@@ -549,8 +545,7 @@ function App() {
                 type="button"
                 className="btn-primary"
                 onClick={() => {
-                  setKind("acuity");
-                  startAcuityTrials();
+                      startAcuityTrials();
                 }}
               >
                 TEST AGAIN
@@ -621,8 +616,7 @@ function App() {
               type="button"
               className="btn-primary"
               onClick={() => {
-                setKind("astigmatism");
-                startTrials();
+                  startTrials();
               }}
             >
               TEST AGAIN
@@ -638,4 +632,3 @@ function App() {
 }
 
 void NUMBER_OF_TRIALS;
-void (null as unknown as TestKind);
