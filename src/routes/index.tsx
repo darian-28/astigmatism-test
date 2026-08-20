@@ -14,7 +14,6 @@ import {
 } from "@/lib/astigmatism";
 import {
   calculateAcuityResult,
-  normalizeTypedAnswer,
   recordAcuityAnswer,
   resetAcuitySession,
   type AcuityAnswer,
@@ -25,13 +24,13 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Beyond Sight — Educational Vision Screening Demonstration" },
+      { title: "Test for Eye Defects — Educational Screening Demonstration" },
       {
         name: "description",
         content:
           "An interactive school-exhibition demonstration of astigmatism and visual acuity screening. Educational screening only, not a medical diagnosis.",
       },
-      { property: "og:title", content: "Beyond Sight — Educational Vision Screening Demonstration" },
+      { property: "og:title", content: "Test for Eye Defects — Educational Screening Demonstration" },
       {
         property: "og:description",
         content:
@@ -123,7 +122,7 @@ function App() {
   const [aTrials, setATrials] = useState<AcuityTrial[]>([]);
   const [aAnswers, setAAnswers] = useState<AcuityAnswer[]>([]);
   const [aCurrent, setACurrent] = useState(0);
-  const [aTyped, setATyped] = useState("");
+  const [aSelected, setASelected] = useState<string | null>(null);
   const [aResult, setAResult] = useState<AcuityResult | null>(null);
 
   const [error, setError] = useState("");
@@ -142,7 +141,7 @@ function App() {
     setATrials(a.trials);
     setAAnswers(a.answers);
     setACurrent(0);
-    setATyped("");
+    setASelected(null);
     setError("");
     setCorrection(null);
     setResult(null);
@@ -169,7 +168,7 @@ function App() {
     setATrials(a.trials);
     setAAnswers(a.answers);
     setACurrent(0);
-    setATyped("");
+    setASelected(null);
     setError("");
     setScreen("acuity-test");
   };
@@ -194,17 +193,16 @@ function App() {
     }
   };
 
-  /** Advance the acuity test. `cannotRead` records "could not resolve". */
-  const acuityNext = (cannotRead = false) => {
-    const trial = aTrials[aCurrent];
-    if (!trial) return;
-    if (!cannotRead && normalizeTypedAnswer(aTyped).length === 0) {
-      setError("Type the number you see, or choose CANNOT READ.");
+  const acuityNext = () => {
+    if (aSelected === null) {
+      setError("Please select an answer to continue.");
       return;
     }
-    const updated = recordAcuityAnswer(aAnswers, trial, aTyped, cannotRead);
+    const trial = aTrials[aCurrent];
+    if (!trial) return;
+    const updated = recordAcuityAnswer(aAnswers, trial, aSelected);
     setAAnswers(updated);
-    setATyped("");
+    setASelected(null);
     setError("");
     if (aCurrent + 1 < aTrials.length) {
       setACurrent(aCurrent + 1);
@@ -219,7 +217,7 @@ function App() {
   if (screen === "home") {
     return (
       <Shell>
-        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">Beyond Sight</h1>
+        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">Test for Eye Defects</h1>
         <p className="mt-4 text-lg text-muted-foreground">
           Interactive demonstrations of how the human eye focuses light and resolves fine detail.
         </p>

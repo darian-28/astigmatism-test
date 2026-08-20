@@ -18,7 +18,7 @@ const LETTERS = ["A", "B", "C"];
 export function FanChart({ rotation = 0, size = 420, optionOrientations = [] }: Props) {
   const R = 200;
   const inner = 18;
-  const chartInk = "#454545";
+  const chartInk = "#111111";
   const chartPaper = "#ffffff";
 
   return (
@@ -53,8 +53,8 @@ export function FanChart({ rotation = 0, size = 420, optionOrientations = [] }: 
         transform={`rotate(${rotation})`}
         fill="none"
         stroke={chartInk}
-        strokeWidth={2.2}
-        style={{ fill: "none", stroke: chartInk, strokeWidth: 2.2, opacity: 1 }}
+        strokeWidth={2.4}
+        style={{ fill: "none", stroke: chartInk, strokeWidth: 2.4, opacity: 1 }}
       >
         {ORIENTATIONS.map((deg) => {
           // Each orientation is drawn as a small band of parallel-ish lines.
@@ -72,7 +72,7 @@ export function FanChart({ rotation = 0, size = 420, optionOrientations = [] }: 
                 y2={ay * R}
                 strokeLinecap="butt"
                 vectorEffect="non-scaling-stroke"
-                style={{ stroke: chartInk, strokeWidth: 2.2, opacity: 1 }}
+                style={{ stroke: chartInk, strokeWidth: 2.4, opacity: 1 }}
               />
             );
           });
@@ -89,7 +89,7 @@ export function FanChart({ rotation = 0, size = 420, optionOrientations = [] }: 
                 y2={Math.sin(a) * R}
                 strokeLinecap="butt"
                 vectorEffect="non-scaling-stroke"
-                style={{ stroke: chartInk, strokeWidth: 2.2, opacity: 1 }}
+                style={{ stroke: chartInk, strokeWidth: 2.4, opacity: 1 }}
               />
             );
           });
