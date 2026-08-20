@@ -5,30 +5,36 @@
 // They are NOT medically validated and carry no clinical accuracy. Only an
 // eye-care professional can diagnose astigmatism.
 //
-// Design notes (false-positive control):
+// False-positive control:
 //  - Every trial is a triad of widely separated orientations, drawn with
-//    identical stroke width / colour, so no direction is rendered stronger.
+//    identical stroke width / colour / opacity, so no direction is stronger.
 //  - Each triad is presented TWICE (a cross-check pair) with a different chart
 //    rotation and a different A/B/C ordering, so a visitor cannot repeat an
-//    answer by remembering a letter or a screen position.
-//  - Scoring separates directional preference, cross-check repeatability and
-//    pattern strength. A positive requires ALL of them.
+//    answer from memory of a letter or a screen position.
+//  - Scoring separates directional clustering, cross-check repeatability,
+//    contradictory answers and overall pattern strength. A positive result
+//    requires ALL of them; anything ambiguous is reported as inconclusive.
 // ---------------------------------------------------------------------------
 
-/** Trials in one astigmatism session (4 cross-check pairs). */
-export const NUMBER_OF_TRIALS = 8;
+/** Trials in one astigmatism session (5 cross-check pairs). */
+export const NUMBER_OF_TRIALS = 10;
 /** Orientations drawn in the fan chart, degrees, spread over 180. */
 export const ORIENTATIONS = [0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165];
 /** Two answers within this many degrees count as the same directional cluster. */
 export const CLUSTER_TOLERANCE_DEG = 20;
-/** Selections inside the dominant cluster needed for a strong pattern. */
-export const POSITIVE_THRESHOLD = 6;
+/** Selections inside the dominant cluster needed for a strong pattern (of 10). */
+export const POSITIVE_THRESHOLD = 8;
 /** Below this dominant-cluster size there is no usable directional preference. */
-export const CONSISTENCY_THRESHOLD = 4;
+export const CONSISTENCY_THRESHOLD = 5;
 /** Fraction of cross-check pairs that must agree for a positive result. */
-export const CROSSCHECK_MIN_AGREEMENT = 0.75;
+export const CROSSCHECK_MIN_AGREEMENT = 0.8;
 /** Below this cross-check agreement the responses are treated as unreliable. */
 export const RELIABILITY_MIN = 0.5;
+/**
+ * Answers far away from the dominant direction that still count as noise. More
+ * than this means the pattern contradicts itself.
+ */
+export const MAX_CONTRADICTIONS = 2;
 
 export type Trial = {
   index: number;
@@ -59,6 +65,8 @@ export type ScreeningResult = {
   /** crossCheckAgreed / crossCheckPairs (1 when no pairs). */
   reliability: number;
   crossCheckConsistent: boolean;
+  /** Answers pointing far away from the dominant direction. */
+  contradictions: number;
 };
 
 /** Normalize an orientation into the 0-180 range (lines are 180-symmetric). */
@@ -85,7 +93,7 @@ function shuffle<T>(arr: T[], rand: () => number): T[] {
 }
 
 /**
- * Build a session: 4 orientation triads, each presented twice (cross-check),
+ * Build a session: 5 orientation triads, each presented twice (cross-check),
  * interleaved so the repeat never follows its partner immediately.
  */
 export function generateTest(trials: number = NUMBER_OF_TRIALS): Trial[] {
@@ -96,11 +104,11 @@ export function generateTest(trials: number = NUMBER_OF_TRIALS): Trial[] {
     [15, 75, 135],
     [30, 90, 150],
     [45, 105, 165],
+    [0, 45, 90],
   ];
-  const rotations = [0, 15, 30, 45, 60, 75, 90, 105];
-  // Presentation order: A B C D  A B C D (repeat never adjacent to partner).
-  const order: number[] = [];
+  const rotations = [0, 15, 30, 45, 60, 75, 90, 105, 120, 135];
   const pairs = Math.max(1, Math.floor(trials / 2));
+  const order: number[] = [];
   for (let round = 0; round < 2; round++) {
     for (let g = 0; g < pairs; g++) order.push(g % baseTriads.length);
   }
@@ -145,8 +153,8 @@ export function calculateResult(trials: Trial[], answers: Answer[]): ScreeningRe
   const { clusterCount, preferredOrientation } = calculateConsistency(answers);
 
   // --- Cross-check: within each repeated triad, did both answers point the
-  // same way? This is measured pair-by-pair and is independent of the
-  // dominant cluster, so a single strong answer cannot carry the result.
+  // same way? Measured pair-by-pair and independent of the dominant cluster,
+  // so a single strong answer cannot carry the result.
   const byGroup = new Map<number, Answer[]>();
   for (const a of answers) {
     const t = trials.find((x) => x.index === a.trialIndex);
@@ -168,12 +176,23 @@ export function calculateResult(trials: Trial[], answers: Answer[]): ScreeningRe
   const reliability = pairs === 0 ? 1 : agreed / pairs;
   const crossCheckConsistent = reliability >= CROSSCHECK_MIN_AGREEMENT;
 
+  // --- Contradictions: answers pointing well away (>45 deg) from the dominant
+  // direction. A real directional preference should rarely flip like this.
+  const contradictions =
+    preferredOrientation === null
+      ? 0
+      : answers.filter((a) => orientationDistance(a.orientation, preferredOrientation) > 45).length;
+
   let outcome: Outcome;
   if (answers.length < total) {
     // Incomplete session - never claim a finding.
     outcome = "inconclusive";
-  } else if (clusterCount >= POSITIVE_THRESHOLD && crossCheckConsistent) {
-    // Strong preference AND repeatable across cross-checks.
+  } else if (
+    clusterCount >= POSITIVE_THRESHOLD &&
+    crossCheckConsistent &&
+    contradictions <= MAX_CONTRADICTIONS
+  ) {
+    // Strong preference AND repeatable across cross-checks AND not contradicted.
     outcome = "positive";
   } else if (reliability < RELIABILITY_MIN) {
     // Responses contradict themselves on repeated views - unreliable.
@@ -196,6 +215,7 @@ export function calculateResult(trials: Trial[], answers: Answer[]): ScreeningRe
     crossCheckPairs: pairs,
     reliability,
     crossCheckConsistent,
+    contradictions,
   };
 }
 
