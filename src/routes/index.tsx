@@ -14,6 +14,7 @@ import {
 } from "@/lib/astigmatism";
 import {
   calculateAcuityResult,
+  normalizeTypedAnswer,
   recordAcuityAnswer,
   resetAcuitySession,
   type AcuityAnswer,
@@ -122,7 +123,7 @@ function App() {
   const [aTrials, setATrials] = useState<AcuityTrial[]>([]);
   const [aAnswers, setAAnswers] = useState<AcuityAnswer[]>([]);
   const [aCurrent, setACurrent] = useState(0);
-  const [aSelected, setASelected] = useState<string | null>(null);
+  const [aTyped, setATyped] = useState("");
   const [aResult, setAResult] = useState<AcuityResult | null>(null);
 
   const [error, setError] = useState("");
@@ -141,7 +142,7 @@ function App() {
     setATrials(a.trials);
     setAAnswers(a.answers);
     setACurrent(0);
-    setASelected(null);
+    setATyped("");
     setError("");
     setCorrection(null);
     setResult(null);
@@ -168,7 +169,7 @@ function App() {
     setATrials(a.trials);
     setAAnswers(a.answers);
     setACurrent(0);
-    setASelected(null);
+    setATyped("");
     setError("");
     setScreen("acuity-test");
   };
@@ -193,16 +194,17 @@ function App() {
     }
   };
 
-  const acuityNext = () => {
-    if (aSelected === null) {
-      setError("Please select an answer to continue.");
-      return;
-    }
+  /** Advance the acuity test. `cannotRead` records "could not resolve". */
+  const acuityNext = (cannotRead = false) => {
     const trial = aTrials[aCurrent];
     if (!trial) return;
-    const updated = recordAcuityAnswer(aAnswers, trial, aSelected);
+    if (!cannotRead && normalizeTypedAnswer(aTyped).length === 0) {
+      setError("Type the number you see, or choose CANNOT READ.");
+      return;
+    }
+    const updated = recordAcuityAnswer(aAnswers, trial, aTyped, cannotRead);
     setAAnswers(updated);
-    setASelected(null);
+    setATyped("");
     setError("");
     if (aCurrent + 1 < aTrials.length) {
       setACurrent(aCurrent + 1);
