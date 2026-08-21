@@ -24,13 +24,13 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Test for Eye Defects — Educational Screening Demonstration" },
+      { title: "Beyond Sight" },
       {
         name: "description",
         content:
           "An interactive school-exhibition demonstration of astigmatism and visual acuity screening. Educational screening only, not a medical diagnosis.",
       },
-      { property: "og:title", content: "Test for Eye Defects — Educational Screening Demonstration" },
+      { property: "og:title", content: "Beyond Sight" },
       {
         property: "og:description",
         content:
@@ -217,7 +217,7 @@ function App() {
   if (screen === "home") {
     return (
       <Shell>
-        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">Test for Eye Defects</h1>
+        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">Beyond Sight</h1>
         <p className="mt-4 text-lg text-muted-foreground">
           Interactive demonstrations of how the human eye focuses light and resolves fine detail.
         </p>
