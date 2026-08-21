@@ -462,25 +462,32 @@ function App() {
             {trial.value}
           </span>
         </div>
-        <div className="mx-auto mt-8 grid max-w-md grid-cols-2 gap-3">
-          {trial.choices.map((c, i) => (
-            <button
-              key={c}
-              type="button"
-              onClick={() => {
-                setASelected(c);
-                setError("");
-              }}
-              aria-pressed={aSelected === c}
-              className={aSelected === c ? "btn-option btn-option-selected" : "btn-option"}
-            >
-              {LETTERS[i]}: {c}
-            </button>
-          ))}
+        <div className="mx-auto mt-8 max-w-md">
+          <label htmlFor="acuity-entry" className="block text-lg">
+            Type the number you see
+          </label>
+          <input
+            id="acuity-entry"
+            type="text"
+            inputMode="numeric"
+            autoComplete="off"
+            value={aSelected ?? ""}
+            onChange={(e) => {
+              setASelected(e.target.value);
+              setError("");
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") acuityNext();
+            }}
+            className="mt-3 w-full border border-border bg-background px-4 py-3 text-2xl tracking-widest"
+          />
         </div>
-        <div className="mt-6 flex flex-col items-center">
+        <div className="mt-6 flex flex-col items-center gap-3">
           <button type="button" className="btn-primary" onClick={acuityNext}>
             {aCurrent + 1 === aTrials.length ? "SEE RESULT" : "NEXT"}
+          </button>
+          <button type="button" className="btn-quiet" onClick={acuityCannotRead}>
+            CANNOT READ
           </button>
           {error && <p className="mt-3 text-base font-medium text-destructive">{error}</p>}
         </div>
