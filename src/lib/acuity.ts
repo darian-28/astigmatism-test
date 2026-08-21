@@ -106,8 +106,10 @@ export function calculateAcuityResult(
   const byIndex = new Map(answers.map((a) => [a.trialIndex, a]));
   let correctCount = 0;
   let smallestCorrectLevel = -1;
+  // consistentLevel = deepest level reached while tolerating at most one miss
+  // along the way, so a single slip does not decide the whole screening.
   let consistentLevel = -1;
-  let stillConsistent = true;
+  let errorsSoFar = 0;
   let reversals = 0;
   let largeErrors = 0;
   let missedEarlier = false;
@@ -118,10 +120,10 @@ export function calculateAcuityResult(
     if (a.correct) {
       correctCount++;
       smallestCorrectLevel = Math.max(smallestCorrectLevel, t.index);
-      if (stillConsistent) consistentLevel = t.index;
+      if (errorsSoFar <= MAX_LARGE_SIZE_ERRORS) consistentLevel = t.index;
       if (missedEarlier) reversals++;
     } else {
-      stillConsistent = false;
+      errorsSoFar++;
       missedEarlier = true;
       if (t.index <= LARGE_SIZE_LEVEL) largeErrors++;
     }
