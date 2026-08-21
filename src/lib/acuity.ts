@@ -14,8 +14,6 @@ export const ACUITY_SIZES_PX = [80, 60, 44, 32, 24, 18, 14, 11];
 export const ACUITY_DIGITS = ["2", "3", "4", "5", "6", "8", "9"];
 /** Digits shown per trial. */
 export const DIGITS_PER_TRIAL = 3;
-/** Multiple-choice options per trial. */
-export const CHOICES_PER_TRIAL = 4;
 /**
  * Smallest level index (0 = largest) the visitor must reach correctly to count
  * as good acuity in this screening. Not a clinical threshold.
@@ -34,11 +32,16 @@ export type AcuityTrial = {
   sizePx: number;
   /** The digit string actually displayed. */
   value: string;
-  /** Multiple-choice options in randomized order (one is `value`). */
-  choices: string[];
 };
 
-export type AcuityAnswer = { trialIndex: number; choice: string; correct: boolean };
+export type AcuityAnswer = {
+  trialIndex: number;
+  /** What the visitor typed (trimmed); null when they pressed CANNOT READ. */
+  entry: string | null;
+  /** True when the visitor said the number was unreadable at this size. */
+  cannotRead: boolean;
+  correct: boolean;
+};
 
 export type AcuityOutcome = "good" | "reduced" | "inconclusive";
 
@@ -63,48 +66,35 @@ function randomDigits(count: number): string {
   return s;
 }
 
-function mutate(value: string): string {
-  const pos = randInt(value.length);
-  let d = value[pos]!;
-  while (d === value[pos]) d = ACUITY_DIGITS[randInt(ACUITY_DIGITS.length)]!;
-  return value.slice(0, pos) + d + value.slice(pos + 1);
-}
-
-function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = randInt(i + 1);
-    const tmp = a[i]!;
-    a[i] = a[j]!;
-    a[j] = tmp;
-  }
-  return a;
-}
-
 export function generateAcuityTest(trials: number = ACUITY_TRIALS): AcuityTrial[] {
   const out: AcuityTrial[] = [];
   for (let i = 0; i < trials; i++) {
-    const value = randomDigits(DIGITS_PER_TRIAL);
-    const set = new Set<string>([value]);
-    let guard = 0;
-    while (set.size < CHOICES_PER_TRIAL && guard++ < 50) set.add(mutate(value));
     out.push({
       index: i,
       sizePx: ACUITY_SIZES_PX[i] ?? ACUITY_SIZES_PX[ACUITY_SIZES_PX.length - 1]!,
-      value,
-      choices: shuffle([...set]),
+      value: randomDigits(DIGITS_PER_TRIAL),
     });
   }
   return out;
 }
 
+/**
+ * Record a typed answer. Pass `null` for CANNOT READ: that is stored as an
+ * explicit "could not identify" response, never as a guess.
+ */
 export function recordAcuityAnswer(
   answers: AcuityAnswer[],
   trial: AcuityTrial,
-  choice: string,
+  entry: string | null,
 ): AcuityAnswer[] {
   const next = answers.filter((a) => a.trialIndex !== trial.index);
-  next.push({ trialIndex: trial.index, choice, correct: choice === trial.value });
+  const cleaned = entry === null ? null : entry.trim().replace(/\s+/g, "");
+  next.push({
+    trialIndex: trial.index,
+    entry: cleaned,
+    cannotRead: cleaned === null,
+    correct: cleaned !== null && cleaned === trial.value,
+  });
   return next.sort((a, b) => a.trialIndex - b.trialIndex);
 }
 
