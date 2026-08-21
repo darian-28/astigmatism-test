@@ -193,14 +193,11 @@ function App() {
     }
   };
 
-  const acuityNext = () => {
-    if (aSelected === null) {
-      setError("Please select an answer to continue.");
-      return;
-    }
+  /** entry === null means the visitor pressed CANNOT READ. */
+  const submitAcuity = (entry: string | null) => {
     const trial = aTrials[aCurrent];
     if (!trial) return;
-    const updated = recordAcuityAnswer(aAnswers, trial, aSelected);
+    const updated = recordAcuityAnswer(aAnswers, trial, entry);
     setAAnswers(updated);
     setASelected(null);
     setError("");
@@ -212,6 +209,16 @@ function App() {
       setScreen("acuity-results");
     }
   };
+
+  const acuityNext = () => {
+    if (!aSelected || aSelected.trim() === "") {
+      setError("Type the number you see, or choose CANNOT READ.");
+      return;
+    }
+    submitAcuity(aSelected);
+  };
+
+  const acuityCannotRead = () => submitAcuity(null);
 
   // ------------------------------------------------------------------ home
   if (screen === "home") {
