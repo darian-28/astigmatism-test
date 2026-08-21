@@ -175,15 +175,17 @@ export function calculateResult(trials: Trial[], answers: Answer[]): ScreeningRe
   } else if (clusterCount >= POSITIVE_THRESHOLD && crossCheckConsistent) {
     // Strong preference AND repeatable across cross-checks.
     outcome = "positive";
-  } else if (reliability < RELIABILITY_MIN) {
-    // Responses contradict themselves on repeated views - unreliable.
+  } else if (clusterCount >= CONSISTENCY_THRESHOLD && reliability < RELIABILITY_MIN) {
+    // A partial directional preference that the repeats contradict: the
+    // responses carry a hint of a pattern but disagree with themselves.
     outcome = "inconclusive";
   } else if (clusterCount >= POSITIVE_THRESHOLD) {
-    // Strong preference but not repeatable enough: prefer inconclusive.
-    outcome = "inconclusive";
-  } else if (clusterCount >= CONSISTENCY_THRESHOLD && !crossCheckConsistent) {
+    // Strong preference but not repeatable enough to call it a finding.
     outcome = "inconclusive";
   } else {
+    // No meaningful directional preference at all - scattered answers mean
+    // no direction stood out, which is the expected pattern without
+    // astigmatism, not a failed session.
     outcome = "negative";
   }
 
