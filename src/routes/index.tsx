@@ -128,6 +128,7 @@ function App() {
   const [error, setError] = useState("");
   const [correction, setCorrection] = useState<string | null>(null);
   const [visitors, setVisitors] = useState(0);
+  const [hasCountedThisSession, setHasCountedThisSession] = useState(false);
 
   useEffect(() => setVisitors(readVisitorCount()), []);
 
@@ -146,6 +147,7 @@ function App() {
     setCorrection(null);
     setResult(null);
     setAResult(null);
+    setHasCountedThisSession(false);
   }, []);
 
   const goHome = () => {
