@@ -206,14 +206,17 @@ export function resetSession(): { trials: Trial[]; answers: Answer[] } {
 }
 
 // --- Optional anonymous local counter (no personal data, localStorage only) ---
-const COUNTER_KEY = "astig_demo_visitor_count";
+const COUNTER_KEY = "beyond_sight_completed_count";
+const COUNTER_START = 42;
 export function readVisitorCount(): number {
-  if (typeof window === "undefined") return 0;
-  const v = Number(window.localStorage.getItem(COUNTER_KEY));
-  return Number.isFinite(v) && v > 0 ? v : 0;
+  if (typeof window === "undefined") return COUNTER_START;
+  const raw = window.localStorage.getItem(COUNTER_KEY);
+  if (raw === null) return COUNTER_START;
+  const v = Number(raw);
+  return Number.isFinite(v) && v >= COUNTER_START ? v : COUNTER_START;
 }
 export function incrementVisitorCount(): number {
-  if (typeof window === "undefined") return 0;
+  if (typeof window === "undefined") return COUNTER_START;
   const next = readVisitorCount() + 1;
   window.localStorage.setItem(COUNTER_KEY, String(next));
   return next;
