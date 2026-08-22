@@ -190,7 +190,10 @@ function App() {
       setCurrent(current + 1);
     } else {
       setResult(calculateResult(trials, updated));
-      setVisitors(incrementVisitorCount());
+      if (!hasCountedThisSession) {
+        setVisitors(incrementVisitorCount());
+        setHasCountedThisSession(true);
+      }
       setScreen("results");
     }
   };
@@ -207,7 +210,10 @@ function App() {
       setACurrent(aCurrent + 1);
     } else {
       setAResult(calculateAcuityResult(aTrials, updated));
-      setVisitors(incrementVisitorCount());
+      if (!hasCountedThisSession) {
+        setVisitors(incrementVisitorCount());
+        setHasCountedThisSession(true);
+      }
       setScreen("acuity-results");
     }
   };
