@@ -128,6 +128,7 @@ function App() {
   const [error, setError] = useState("");
   const [correction, setCorrection] = useState<string | null>(null);
   const [visitors, setVisitors] = useState(0);
+  const [hasCountedThisSession, setHasCountedThisSession] = useState(false);
 
   useEffect(() => setVisitors(readVisitorCount()), []);
 
@@ -146,6 +147,7 @@ function App() {
     setCorrection(null);
     setResult(null);
     setAResult(null);
+    setHasCountedThisSession(false);
   }, []);
 
   const goHome = () => {
@@ -188,7 +190,10 @@ function App() {
       setCurrent(current + 1);
     } else {
       setResult(calculateResult(trials, updated));
-      setVisitors(incrementVisitorCount());
+      if (!hasCountedThisSession) {
+        setVisitors(incrementVisitorCount());
+        setHasCountedThisSession(true);
+      }
       setScreen("results");
     }
   };
@@ -205,7 +210,10 @@ function App() {
       setACurrent(aCurrent + 1);
     } else {
       setAResult(calculateAcuityResult(aTrials, updated));
-      setVisitors(incrementVisitorCount());
+      if (!hasCountedThisSession) {
+        setVisitors(incrementVisitorCount());
+        setHasCountedThisSession(true);
+      }
       setScreen("acuity-results");
     }
   };
@@ -255,7 +263,10 @@ function App() {
           Educational screening only — not a medical diagnosis.
         </p>
         {visitors > 0 && (
-          <p className="mt-8 text-sm text-muted-foreground">Tests taken on this laptop: {visitors}</p>
+          <div className="mt-10">
+            <p className="text-3xl font-semibold tracking-tight text-foreground">{visitors}</p>
+            <p className="text-sm text-muted-foreground">people have completed the test</p>
+          </div>
         )}
       </Shell>
     );
