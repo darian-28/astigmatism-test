@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import logoAsset from "@/assets/beyond-sight-logo.png.asset.json";
 import { useCallback, useEffect, useState } from "react";
 import { FanChart } from "@/components/FanChart";
 import {
