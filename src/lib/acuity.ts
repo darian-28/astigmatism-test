@@ -43,7 +43,7 @@ export type AcuityAnswer = {
   correct: boolean;
 };
 
-export type AcuityOutcome = "good" | "reduced" | "inconclusive";
+export type AcuityOutcome = "good" | "reduced" | "inconclusive" | "myopia" | "hypermetropia";
 
 export type AcuityResult = {
   outcome: AcuityOutcome;
@@ -129,9 +129,22 @@ export function calculateAcuityResult(
     }
   }
 
+  // Directional pattern: failing the two smallest sizes points to distance
+  // blur (myopia-like); failing the two largest sizes points the other way.
+  const failedAt = (i: number) => {
+    const a = byIndex.get(i);
+    return !!a && (!a.correct || a.cannotRead);
+  };
+  const firstTwoFailed = total >= 2 && failedAt(0) && failedAt(1);
+  const lastTwoFailed = total >= 2 && failedAt(total - 2) && failedAt(total - 1);
+
   let outcome: AcuityOutcome;
   if (answers.length < total) {
     outcome = "inconclusive";
+  } else if (firstTwoFailed) {
+    outcome = "hypermetropia";
+  } else if (lastTwoFailed) {
+    outcome = "myopia";
   } else if (largeErrors > MAX_LARGE_SIZE_ERRORS || reversals > MAX_REVERSALS) {
     // Contradictory responding: missed easy sizes, or read smaller ones after
     // missing larger ones. Not enough consistency for a screening statement.
