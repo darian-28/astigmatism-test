@@ -43,7 +43,7 @@ export type AcuityAnswer = {
   correct: boolean;
 };
 
-export type AcuityOutcome = "good" | "reduced" | "inconclusive";
+export type AcuityOutcome = "good" | "reduced" | "inconclusive" | "myopia" | "hypermetropia";
 
 export type AcuityResult = {
   outcome: AcuityOutcome;
