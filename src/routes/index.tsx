@@ -263,7 +263,10 @@ function App() {
           Educational screening only — not a medical diagnosis.
         </p>
         {visitors > 0 && (
-          <p className="mt-8 text-sm text-muted-foreground">Tests taken on this laptop: {visitors}</p>
+          <div className="mt-10">
+            <p className="text-3xl font-semibold tracking-tight text-foreground">{visitors}</p>
+            <p className="text-sm text-muted-foreground">people have completed the test</p>
+          </div>
         )}
       </Shell>
     );
