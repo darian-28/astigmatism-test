@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import logoAsset from "@/assets/beyond-sight-logo.png.asset.json";
 import { useCallback, useEffect, useState } from "react";
 import { FanChart } from "@/components/FanChart";
 import {
@@ -63,16 +62,9 @@ function Shell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-background text-foreground">
       <header className="border-b border-border">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-6 py-3">
-          <div className="flex items-center gap-3">
-            <img
-              src={logoAsset.url}
-              alt="Beyond Sight logo"
-              className="h-10 w-10 rounded-md object-cover"
-            />
-            <span className="text-sm font-medium tracking-wide text-muted-foreground">
-              Educational screening demonstration
-            </span>
-          </div>
+          <span className="text-sm font-medium tracking-wide text-muted-foreground">
+            Educational screening demonstration
+          </span>
           <FullscreenButton />
         </div>
       </header>
